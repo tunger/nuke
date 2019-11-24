@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;net472</TargetFrameworks>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Include="**\*.flf" />
     <EmbeddedResource Include="CI\TeamCity\Configuration\pom.xml" />
     <!--<None Remove="execution-plan.html" />-->
     <EmbeddedResource Include="Execution\execution-plan.html" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
     <PackageReference Include="Glob" Version="1.1.4" />
@@ -31,13 +31,14 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="YamlDotNet" Version="8.0.0" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == ''">
     <None Include="$(MSBuildProjectName).props" PackagePath="build" Pack="true" />
     <None Include="$(MSBuildProjectName).targets" PackagePath="build" Pack="true" />
-    <None Include="..\Nuke.MSBuildTaskRunner\Nuke.MSBuildTaskRunner.targets" PackagePath="build" Pack="true" />
-    <None Include="..\Nuke.MSBuildTaskRunner\bin\$(Configuration)\netcoreapp3.0\publish\**\*.*" PackagePath="build" Pack="true" />
-    <!--<None Include="..\Nuke.MSBuildTaskRunner\bin\$(Configuration)\net461\publish\**\*.*" PackagePath="build\netfx" Pack="true" />-->
+    <None Include="..\Nuke.MSBuildTasks\Nuke.MSBuildTasks.targets" PackagePath="build\netcore" Pack="true" />
+    <None Include="..\Nuke.MSBuildTasks\Nuke.MSBuildTasks.targets" PackagePath="build\netfx" Pack="true" />
+    <None Include="..\Nuke.MSBuildTasks\bin\$(Configuration)\netcoreapp3.0\publish\**\*.*" PackagePath="build\netcore" Pack="true" />
+    <None Include="..\Nuke.MSBuildTasks\bin\$(Configuration)\net472\publish\**\*.*" PackagePath="build\netfx" Pack="true" />
   </ItemGroup>
-  
+
 </Project>

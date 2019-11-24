@@ -7,6 +7,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <NoWarn>CS0649;CS0169</NoWarn>
     <NukeRootDirectory>.\..</NukeRootDirectory>
+    <NukeMSBuildIntegration Condition="'$(NukeMSBuildIntegration)' == ''">False</NukeMSBuildIntegration>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -14,6 +15,18 @@
     <DefineConstants Condition="'$(OS)' == 'Windows_NT'">$(DefineConstants);WIN</DefineConstants>
     <DefineConstants Condition="'$(OS)' != 'Windows_NT'">$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- https://github.com/nuke-build/common/tree/develop/source/Nuke.GlobalTool/templates -->
+    <!-- https://github.com/nuke-build/common/blob/develop/source/Nuke.GlobalTool/templates/_build.sdk.csproj -->
+    <!-- http,s://raw.githubusercontent.com/nuke-build/common/develop/source/Nuke.GlobalTool/templates/_build.sdk.csproj -->
+<!--    <NukeExternalFiles Include="https://github.com/nuke-build/common/tree/develop/source/Nuke.GlobalTool/templates" BasePath="..\download">-->
+<!--      <TargetFramework>Bla</TargetFramework>-->
+<!--      <GitVersion />-->
+<!--      <NuGetSource>https://www.myget.org/F/matkoch/api/v2/package</NuGetSource>-->
+<!--      <NukeVersion>6.6.6</NukeVersion>-->
+<!--    </NukeExternalFiles>-->
+  </ItemGroup>
 
   <ItemGroup>
     <PackageDownload Include="GitVersion.Tool" Version="[5.1.1]" />
