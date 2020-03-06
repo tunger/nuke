@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -23,6 +23,7 @@ namespace Nuke.Common.Execution
             var defaultTargets = defaultTargetExpressions.Select(x => x.Compile().Invoke(build)).ToList();
             var properties = build.GetType()
                 .GetProperties(ReflectionService.Instance)
+                .Concat(build.GetType().GetInterfaces().SelectMany(x => x.GetProperties(ReflectionService.Instance)))
                 .Where(x => x.PropertyType == typeof(Target)).ToList();
 
             var executables = new List<ExecutableTarget>();
