@@ -9,6 +9,7 @@ namespace Nuke.Common
 {
     public static class TargetDefinitionExtensions
     {
+        // TODO: REMOVE!!
         public static ITargetDefinition Executes(this ITargetDefinition definition, Target target)
         {
             target(definition);

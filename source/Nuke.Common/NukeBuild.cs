@@ -89,17 +89,6 @@ namespace Nuke.Common
         /// </summary>
         public IReadOnlyCollection<ExecutableTarget> ExecutingTargets => ExecutionPlan.Where(x => x.Status != ExecutionStatus.Skipped).ToList();
 
-        /// <summary>
-        /// Retrieves a target from an implemented interface.
-        /// </summary>
-        /// <typeparam name="TInterface">The interface type containing the target.</typeparam>
-        /// <param name="targetSelector">Function returning the target inside the interface.</param>
-        /// <returns></returns>
-        protected Target FromInterface<TInterface>(Func<TInterface, Target> targetSelector)
-        {
-            return FromInterface(targetSelector, this);
-        }
-
         protected internal virtual OutputSink OutputSink => Host switch
             {
                 HostType.Bitrise => new BitriseOutputSink(),

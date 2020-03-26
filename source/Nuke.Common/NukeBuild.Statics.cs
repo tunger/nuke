@@ -166,22 +166,5 @@ namespace Nuke.Common
 
             return HostType.Console;
         }
-
-        /// <summary>
-        /// Retrieves a target from an interface implemented by <paramref name="nukeBuild"/>.
-        /// </summary>
-        /// <typeparam name="TInterface">The interface type containing the target.</typeparam>
-        /// <param name="targetSelector">Function returning the target inside the interface.</param>
-        /// <param name="nukeBuild">The instance of <see cref="Nuke.Common.NukeBuild"/> implementing the interface.</param>
-        /// <returns></returns>
-        public static Target FromInterface<TInterface>(Func<TInterface, Target> targetSelector, NukeBuild nukeBuild)
-        {
-            if (!typeof(TInterface).IsInterface)
-                throw new InvalidCastException($"Type {typeof(TInterface).FullName} is not an interface.");
-            if (!(nukeBuild is TInterface))
-                throw new InvalidCastException($"Cannot cast to interface of type {typeof(TInterface).FullName}");
-            var castType = (TInterface)(object)nukeBuild;
-            return targetSelector(castType);
-        }
     }
 }

@@ -31,7 +31,7 @@ namespace Nuke.Common.Execution
             foreach (var property in properties)
             {
                 var factory = (Target) property.GetValue(build);
-                var definition = new TargetDefinition();
+                var definition = new TargetDefinition(build);
                 factory.Invoke(definition);
 
                 var target = new ExecutableTarget

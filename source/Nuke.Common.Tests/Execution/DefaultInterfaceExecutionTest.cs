@@ -19,24 +19,24 @@ namespace Nuke.Common.Tests.Execution
         public void Test()
         {
             var build = new TestBuild();
-            var ibuild = (ITestBuild)build;
-            var targets = ExecutableTargetFactory.CreateAll(build, x => NukeBuild.FromInterface<ITestBuild>(i => i.A, x));
+            var targets = ExecutableTargetFactory.CreateAll(build, x => x.E);
 
             var a = targets.Single(x => x.Name == nameof(ITestBuild.A));
             var b = targets.Single(x => x.Name == nameof(ITestBuild.B));
             var c = targets.Single(x => x.Name == nameof(ITestBuild.C));
             var d = targets.Single(x => x.Name == nameof(ITestBuild.D));
+            var e = targets.Single(x => x.Name == nameof(TestBuild.E));
 
-            targets.Single(x => x.IsDefault).Should().Be(a);
+            targets.Single(x => x.IsDefault).Should().Be(e);
 
             a.Factory.Should().Be(NukeBuild.FromInterface<ITestBuild>(i => i.A, build));
-            a.Description.Should().Be(DefaultInterfaceExecutionTest.Description);
-            a.Requirements.Should().Equal(DefaultInterfaceExecutionTest.Requirement);
-            a.Actions.Should().Equal(DefaultInterfaceExecutionTest.Action);
+            a.Description.Should().Be(Description);
+            a.Requirements.Should().Equal(Requirement);
+            a.Actions.Should().Equal(Action);
             a.AllDependencies.Should().BeEmpty();
 
             b.DependencyBehavior.Should().Be(DependencyBehavior.Execute);
-            b.StaticConditions.Should().Equal(DefaultInterfaceExecutionTest.StaticCondition);
+            b.StaticConditions.Should().Equal(StaticCondition);
             b.ExecutionDependencies.Should().Equal(d);
             b.TriggerDependencies.Should().Equal(c);
             b.AllDependencies.Should().NotBeEmpty();
@@ -48,13 +48,20 @@ namespace Nuke.Common.Tests.Execution
             c.AllDependencies.Should().NotBeEmpty();
 
             d.DependencyBehavior.Should().Be(DependencyBehavior.Skip);
-            d.DynamicConditions.Should().Equal(DefaultInterfaceExecutionTest.DynamicCondition);
+            d.DynamicConditions.Should().Equal(DynamicCondition);
             d.OrderDependencies.Should().Equal(b);
             d.Triggers.Should().Equal(c);
             d.AllDependencies.Should().NotBeEmpty();
+
+            e.ExecutionDependencies.Should().Equal(a);
         }
 
-        private class TestBuild : NukeBuild, ITestBuild { }
+        private class TestBuild : NukeBuild, ITestBuild
+        {
+            public Target E => _ => _
+                .DependsOn<ITestBuild>(x => x.A)
+                .Executes(() => { });
+        }
 
         private interface ITestBuild
         {
