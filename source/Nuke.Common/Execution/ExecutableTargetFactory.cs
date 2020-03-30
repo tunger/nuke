@@ -22,7 +22,7 @@ namespace Nuke.Common.Execution
         {
             var defaultTargets = defaultTargetExpressions.Select(x => x.Compile().Invoke(build)).ToList();
             var properties = build.GetType()
-                .GetProperties(ReflectionService.Instance)
+                .GetProperties(ReflectionService.Instance) // TODO: static targets?
                 .Concat(build.GetType().GetInterfaces().SelectMany(x => x.GetProperties(ReflectionService.Instance)))
                 .Where(x => x.PropertyType == typeof(Target)).ToList();
 
