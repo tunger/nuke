@@ -29,7 +29,6 @@ namespace Nuke.Common.Tests.Execution
 
             targets.Single(x => x.IsDefault).Should().Be(e);
 
-            a.Factory.Should().Be(NukeBuild.FromInterface<ITestBuild>(i => i.A, build));
             a.Description.Should().Be(Description);
             a.Requirements.Should().Equal(Requirement);
             a.Actions.Should().Equal(Action);
@@ -56,7 +55,49 @@ namespace Nuke.Common.Tests.Execution
             e.ExecutionDependencies.Should().Equal(a);
         }
 
+        [Fact]
+        public void TestMultipleInheritance()
+        {
+            var build = new MultipleInheritanceTestBuild();
+            var targets = ExecutableTargetFactory.CreateAll(build, x => x.Default);
+
+            var a = targets.Single(x => x.Name == nameof(ITestBuild.A));
+            var b = targets.Single(x => x.Name == nameof(ITestBuild.B));
+            var c = targets.Single(x => x.Name == nameof(ITestBuild.C));
+            var d = targets.Single(x => x.Name == nameof(ITestBuild.D));
+            var f = targets.Single(x => x.Name == nameof(IInheritedTestBuild.F));
+
+            f.Triggers.Should().Equal(a);
+
+            b.DependencyBehavior.Should().Be(DependencyBehavior.Execute);
+            b.StaticConditions.Should().Equal(StaticCondition);
+            b.ExecutionDependencies.Should().Equal(d);
+            b.TriggerDependencies.Should().Equal(c);
+            b.AllDependencies.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void TestInvalidDependencyType()
+        {
+            var build = new InvalidDependencyTypeTestBuild();
+            Assert.Throws<InvalidCastException>(() => ExecutableTargetFactory.CreateAll(build, x => x.E));
+        }
+
         private class TestBuild : NukeBuild, ITestBuild
+        {
+            public Target E => _ => _
+                .DependsOn<ITestBuild>(x => x.A)
+                .Executes(() => { });
+        }
+
+        private class MultipleInheritanceTestBuild : NukeBuild, IInheritedTestBuild
+        {
+            public Target Default => _ => _
+                .DependsOn<ITestBuild>(x => x.A)
+                .Executes(() => { });
+        }
+
+        private class InvalidDependencyTypeTestBuild : NukeBuild
         {
             public Target E => _ => _
                 .DependsOn<ITestBuild>(x => x.A)
@@ -91,6 +132,12 @@ namespace Nuke.Common.Tests.Execution
                 .OnlyWhenDynamic(DynamicCondition)
                 .After(B)
                 .Before(C);
+        }
+
+        private interface IInheritedTestBuild : ITestBuild
+        {
+            public Target F => _ => _
+                .Triggers<ITestBuild>(x => x.A);
         }
     }
 }
