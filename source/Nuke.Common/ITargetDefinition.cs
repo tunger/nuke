@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -76,6 +76,18 @@ namespace Nuke.Common
         ///   Adds a required parameter that will be checked prior to build execution.
         /// </summary>
         ITargetDefinition Requires<T>(params Expression<Func<T?>>[] parameterRequirement)
+            where T : struct;
+
+        /// <summary>
+        ///   Adds a required parameter that will be checked prior to build execution.
+        /// </summary>
+        ITargetDefinition Requires<TBuild, T>(params Expression<Func<TBuild, T>>[] parameterRequirement)
+            where T : class;
+
+        /// <summary>
+        ///   Adds a required parameter that will be checked prior to build execution.
+        /// </summary>
+        ITargetDefinition Requires<TBuild, T>(params Expression<Func<TBuild, T?>>[] parameterRequirement)
             where T : struct;
 
         /// <summary>

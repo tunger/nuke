@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -50,6 +50,9 @@ namespace Nuke.Common.Execution
 
         private static void InjectValueInteractive(NukeBuild build, MemberInfo member)
         {
+            if (member is PropertyInfo && !((PropertyInfo)member).CanWrite)
+                return;
+
             var memberType = member.GetMemberType();
             var nameOrDescription = ParameterService.GetParameterDescription(member) ??
                                     ParameterService.GetParameterMemberName(member);
