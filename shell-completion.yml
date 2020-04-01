@@ -1,5 +1,7 @@
 ApiKey: 
 AutoStash: 
+BootArg: 
+BootFoo: 
 Configuration:
 - Debug
 - Release
@@ -25,6 +27,7 @@ Root:
 Skip:
 - Analysis
 - Announce
+- Boot1
 - Changelog
 - CheckoutExternalRepositories
 - Clean
@@ -48,6 +51,7 @@ Source:
 Target:
 - Analysis
 - Announce
+- Boot1
 - CheckoutExternalRepositories
 - Clean
 - Compile

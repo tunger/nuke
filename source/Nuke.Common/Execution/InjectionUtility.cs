@@ -16,6 +16,7 @@ namespace Nuke.Common.Execution
     {
         public static T GetInjectionValue<T>(Expression<Func<T>> parameterExpression)
         {
+            // TODO: caching?
             var parameter = parameterExpression.GetMemberInfo();
             var attribute = parameter.GetCustomAttribute<InjectionAttributeBase>().NotNull();
             return (T) attribute.GetValue(parameter, instance: null);
@@ -40,8 +41,7 @@ namespace Nuke.Common.Execution
                 if (member.DeclaringType == typeof(NukeBuild))
                     continue;
 
-                // TODO: Skip default interface implementations
-                if (member is PropertyInfo property && property.GetSetMethod() == null)
+                if (member.ReflectedType.NotNull().IsInterface)
                     continue;
 
                 var value = attribute.GetValue(member, instance);

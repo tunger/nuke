@@ -27,7 +27,7 @@ stages:
         steps:
           - task: CmdLine@2
             inputs:
-              script: './build.cmd Restore Compile --skip'
+              script: './build.cmd Compile --skip'
       - job: Test
         displayName: '🚦 Test 🧩'
         dependsOn: [ Compile ]
@@ -64,7 +64,7 @@ stages:
         steps:
           - task: CmdLine@2
             inputs:
-              script: './build.cmd Restore Compile --skip'
+              script: './build.cmd Compile --skip'
       - job: Test
         displayName: '🚦 Test 🧩'
         dependsOn: [ Compile ]
@@ -101,7 +101,7 @@ stages:
         steps:
           - task: CmdLine@2
             inputs:
-              script: './build.cmd Restore Compile --skip'
+              script: './build.cmd Compile --skip'
       - job: Test
         displayName: '🚦 Test 🧩'
         dependsOn: [ Compile ]

@@ -35,6 +35,12 @@ project {
     buildTypesOrder = arrayListOf(Compile, Pack, Test_P1T2, Test_P2T2, Test, Coverage, Publish, Announce)
 
     params {
+        text (
+            "env.BootFoo",
+            label = "BootFoo",
+            value = "",
+            allowEmpty = true,
+            display = ParameterDisplay.NORMAL)
         select (
             "env.Verbosity",
             label = "Verbosity",
@@ -99,7 +105,7 @@ object Compile : BuildType({
     steps {
         exec {
             path = "build.cmd"
-            arguments = "Restore Compile --skip"
+            arguments = "Compile --skip"
         }
     }
 })

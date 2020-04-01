@@ -38,6 +38,22 @@ using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 using static Nuke.Common.Tools.Slack.SlackTasks;
 
+interface IBoot1
+{
+    string BootFoo { get; }
+    [Parameter] string BootArg => InjectionUtility.GetInjectionValue(() => BootArg);
+    [Solution] Solution Solution2 => InjectionUtility.GetInjectionValue(() => Solution2);
+    // [Parameter] string BootArg1 { get; set; }
+
+    Target Boot1 => _ => _
+        .Requires(() => BootArg)
+        .Executes(() =>
+        {
+            Logger.Info(Solution2?.Path ?? "<null>");
+            Logger.Info(BootArg);
+        });
+}
+
 [CheckBuildProjectConfigurations]
 [DotNetVerbosityMapping]
 [UnsetVisualStudioEnvironmentVariables]
@@ -75,7 +91,7 @@ using static Nuke.Common.Tools.Slack.SlackTasks;
     InvokedTargets = new[] { nameof(Test), nameof(Pack) },
     NonEntryTargets = new[] { nameof(Restore) },
     ExcludedTargets = new[] { nameof(Clean), nameof(Coverage) })]
-partial class Build : NukeBuild
+partial class Build : NukeBuild, IBoot1
 {
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
@@ -83,6 +99,9 @@ partial class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
     public static int Main() => Execute<Build>(x => x.Pack);
+
+    [Parameter] public string BootFoo { get; }
+    // public string BootArg { get; }
 
     [CI] readonly TeamCity TeamCity;
     [CI] readonly AzurePipelines AzurePipelines;
@@ -124,9 +143,10 @@ partial class Build : NukeBuild
     Project MSBuildTaskRunnerProject => Solution.GetProject("Nuke.MSBuildTaskRunner");
 
     Target Compile => _ => _
-        .DependsOn(Restore)
+        //.DependsOn<IBoot1>(x => x.Boot1)
         .Executes(() =>
         {
+            //
             DotNetBuild(_ => _
                 .SetProjectFile(Solution)
                 .SetNoRestore(InvokedTargets.Contains(Restore))
