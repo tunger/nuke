@@ -33,17 +33,30 @@ namespace Nuke.Common.Tests.Execution
             RequirementService.ValidateRequirements(build, new[] { e });
         }
 
+        [Fact]
+        public void TestWithEnvironmentInfoArgument()
+        {
+            EnvironmentInfo.SetVariable("buildserver.interfaceParameter", "test");
+
+            var build = new TestBuild();
+            var targets = ExecutableTargetFactory.CreateAll(build, x => x.E);
+
+            var e = targets.Single(x => x.Name == nameof(TestBuild.E));
+            RequirementService.ValidateRequirements(build, new[] { e });
+        }
+
         private class TestBuild : NukeBuild, ITestBuild
         {
             public Target E => _ => _
-                .Requires((ITestBuild x) => x.InterfaceParameter)
+                .Requires(() => ((ITestBuild)this).InterfaceParameter)
                 .DependsOn<ITestBuild>(x => x.A)
                 .Executes(() => { });
         }
         
         private interface ITestBuild
         {
-            [Parameter] string InterfaceParameter => EnvironmentInfo.GetParameter<string>(nameof(InterfaceParameter));
+            [Parameter] string InterfaceParameter => InjectionUtility.GetInjectionValue(() => InterfaceParameter)
+                ?? EnvironmentInfo.GetParameter<string>("buildserver.interfaceParameter");
 
             public Target A => _ => _
                 .Requires(() => InterfaceParameter)

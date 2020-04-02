@@ -79,18 +79,6 @@ namespace Nuke.Common
             where T : struct;
 
         /// <summary>
-        ///   Adds a required parameter that will be checked prior to build execution.
-        /// </summary>
-        ITargetDefinition Requires<TBuild, T>(params Expression<Func<TBuild, T>>[] parameterRequirement)
-            where T : class;
-
-        /// <summary>
-        ///   Adds a required parameter that will be checked prior to build execution.
-        /// </summary>
-        ITargetDefinition Requires<TBuild, T>(params Expression<Func<TBuild, T?>>[] parameterRequirement)
-            where T : struct;
-
-        /// <summary>
         ///   Adds a requirement that will be checked prior to build execution.
         /// </summary>
         ITargetDefinition Requires(params Expression<Func<bool>>[] requirement);

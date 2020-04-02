@@ -106,20 +106,6 @@ namespace Nuke.Common.Execution
             return this;
         }
 
-        public ITargetDefinition Requires<TBuild, T>(params Expression<Func<TBuild, T>>[] parameterRequirement)
-            where T : class
-        {
-            Requirements.AddRange(parameterRequirement);
-            return this;
-        }
-
-        public ITargetDefinition Requires<TBuild, T>(params Expression<Func<TBuild, T?>>[] parameterRequirement)
-            where T : struct
-        {
-            Requirements.AddRange(parameterRequirement);
-            return this;
-        }
-
         public ITargetDefinition Requires(params Expression<Func<bool>>[] requirement)
         {
             Requirements.AddRange(requirement);
