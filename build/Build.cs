@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -37,6 +37,7 @@ using static Nuke.Common.Tools.InspectCode.InspectCodeTasks;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 using static Nuke.Common.Tools.Slack.SlackTasks;
+using BuildCommon;
 
 interface IBoot1
 {
@@ -54,44 +55,50 @@ interface IBoot1
         });
 }
 
-[CheckBuildProjectConfigurations]
-[DotNetVerbosityMapping]
-[UnsetVisualStudioEnvironmentVariables]
-[ShutdownDotNetBuildServerOnFinish]
-[TeamCitySetDotCoverHomePath]
-[TeamCity(
-    TeamCityAgentPlatform.Windows,
-    Version = "2019.2",
-    VcsTriggeredTargets = new[] { nameof(Pack), nameof(Test) },
-    NightlyTriggeredTargets = new[] { nameof(Pack), nameof(Test) },
-    ManuallyTriggeredTargets = new[] { nameof(Publish) },
-    NonEntryTargets = new[] { nameof(Restore) },
-    ExcludedTargets = new[] { nameof(Clean) })]
-[GitHubActions(
-    "continuous",
-    GitHubActionsImage.MacOs1014,
-    GitHubActionsImage.Ubuntu1604,
-    GitHubActionsImage.Ubuntu1804,
-    GitHubActionsImage.WindowsServer2016R2,
-    GitHubActionsImage.WindowsServer2019,
-    On = new[] { GitHubActionsTrigger.Push },
-    InvokedTargets = new[] { nameof(Test), nameof(Pack) },
-    ImportGitHubTokenAs = nameof(GitHubToken),
-    ImportSecrets = new[] { nameof(SlackWebhook), nameof(GitterAuthToken) })]
-[AppVeyor(
-    AppVeyorImage.VisualStudio2019,
-    AppVeyorImage.Ubuntu1804,
-    SkipTags = true,
-    InvokedTargets = new[] { nameof(Test), nameof(Pack) })]
-[AzurePipelines(
-    suffix: null,
-    AzurePipelinesImage.UbuntuLatest,
-    AzurePipelinesImage.WindowsLatest,
-    AzurePipelinesImage.MacOsLatest,
-    InvokedTargets = new[] { nameof(Test), nameof(Pack) },
-    NonEntryTargets = new[] { nameof(Restore) },
-    ExcludedTargets = new[] { nameof(Clean), nameof(Coverage) })]
-partial class Build : NukeBuild, IBoot1
+//[CheckBuildProjectConfigurations]
+//[DotNetVerbosityMapping]
+//[UnsetVisualStudioEnvironmentVariables]
+//[ShutdownDotNetBuildServerOnFinish]
+//[TeamCitySetDotCoverHomePath]
+//[TeamCity(
+//    TeamCityAgentPlatform.Windows,
+//    Version = "2019.2",
+//    VcsTriggeredTargets = new[] { nameof(Pack), nameof(Test) },
+//    NightlyTriggeredTargets = new[] { nameof(Pack), nameof(Test) },
+//    ManuallyTriggeredTargets = new[] { nameof(Publish) },
+//    NonEntryTargets = new[] { nameof(Restore) },
+//    ExcludedTargets = new[] { nameof(Clean) })]
+//[GitHubActions(
+//    "continuous",
+//    GitHubActionsImage.MacOs1014,
+//    GitHubActionsImage.Ubuntu1604,
+//    GitHubActionsImage.Ubuntu1804,
+//    GitHubActionsImage.WindowsServer2016R2,
+//    GitHubActionsImage.WindowsServer2019,
+//    On = new[] { GitHubActionsTrigger.Push },
+//    InvokedTargets = new[] { nameof(Test), nameof(Pack) },
+//    ImportGitHubTokenAs = nameof(GitHubToken),
+//    ImportSecrets = new[] { nameof(SlackWebhook), nameof(GitterAuthToken) })]
+//[AppVeyor(
+//    AppVeyorImage.VisualStudio2019,
+//    AppVeyorImage.Ubuntu1804,
+//    SkipTags = true,
+//    InvokedTargets = new[] { nameof(Test), nameof(Pack) })]
+//[AzurePipelines(
+//    suffix: null,
+//    AzurePipelinesImage.UbuntuLatest,
+//    AzurePipelinesImage.WindowsLatest,
+//    AzurePipelinesImage.MacOsLatest,
+//    InvokedTargets = new[] { nameof(Test), nameof(Pack) },
+//    NonEntryTargets = new[] { nameof(Restore) },
+//    ExcludedTargets = new[] { nameof(Clean), nameof(Coverage) })]
+partial class Build : NukeBuild, IBoot1, 
+    IProvideVersionInfoFromGitVersion, 
+    IRequireVersionInfo, 
+    IUseDockerBuild, 
+    IWriteVersionInfo,
+    IUseOctopus
+    //IProvideVersionInfoFromFile
 {
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
@@ -117,6 +124,14 @@ partial class Build : NukeBuild, IBoot1
     const string DevelopBranch = "develop";
     const string ReleaseBranchPrefix = "release";
     const string HotfixBranchPrefix = "hotfix";
+
+    private IRequireVersionInfo VersionInfo => this;
+
+    Target MyInterface => _ => _
+        .Executes(() =>
+        {
+            Logger.Normal(VersionInfo.FullSemVer);
+        });
 
     Target Clean => _ => _
         .Before(Restore)
