@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -19,16 +19,16 @@ namespace Nuke.Common.Utilities
         [Pure]
         public static string DoubleQuoteIfNeeded([CanBeNull] this string str, params char?[] disallowed)
         {
-            if (string.IsNullOrWhiteSpace(str))
-                return string.Empty;
-
-            if (str.IsDoubleQuoted())
-                return str;
-
-            if (!str.Contains(disallowed))
-                return str;
+            if (!IsDoubleQuoteNeeded(str))
+                return str ?? string.Empty;
 
             return str.DoubleQuote();
+        }
+
+        [Pure]
+        public static bool IsDoubleQuoteNeeded([CanBeNull] this string str, params char?[] disallowed)
+        {
+            return !string.IsNullOrWhiteSpace(str) && !str.IsDoubleQuoted() && str.Contains(disallowed);
         }
 
         [Pure]

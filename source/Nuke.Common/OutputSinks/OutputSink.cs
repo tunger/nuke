@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using JetBrains.Annotations;
 using Nuke.Common.Execution;
+using Nuke.Common.Tooling;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
 
@@ -71,6 +72,11 @@ namespace Nuke.Common.OutputSinks
             else
                 WriteFailedBuild();
             WriteNormal();
+        }
+
+        internal virtual void WriteToolInvocation(string toolPath, IArguments arguments)
+        {
+            WriteInformation($"> {System.IO.Path.GetFullPath(toolPath).DoubleQuoteIfNeeded()} {arguments}");
         }
 
         protected virtual void WriteSuccessfulBuild()

@@ -16,13 +16,14 @@ namespace Nuke.Common.Tooling
         string FilterSecrets(string text);
         string RenderForExecution();
         string RenderForOutput();
+        IReadOnlyList<KeyValuePair<string, List<string>>> GetArguments();
     }
 
     // TODO: extract {value} and {key} into constants
     public sealed class Arguments : IArguments
     {
         private const string HiddenString = "[hidden]";
-        private const char Space = ' ';
+        internal const char Space = ' ';
 
         private readonly List<string> _secrets = new List<string>();
         private readonly List<KeyValuePair<string, List<string>>> _arguments = new List<KeyValuePair<string, List<string>>>();
@@ -216,5 +217,7 @@ namespace Nuke.Common.Tooling
         {
             return RenderForOutput();
         }
+
+        public IReadOnlyList<KeyValuePair<string, List<string>>> GetArguments() => _arguments;
     }
 }

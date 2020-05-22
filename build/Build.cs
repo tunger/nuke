@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -38,43 +38,7 @@ using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 using static Nuke.Common.Tools.Slack.SlackTasks;
 
-[CheckBuildProjectConfigurations]
-[DotNetVerbosityMapping]
-[UnsetVisualStudioEnvironmentVariables]
-[ShutdownDotNetBuildServerOnFinish]
-[TeamCitySetDotCoverHomePath]
-[TeamCity(
-    TeamCityAgentPlatform.Windows,
-    Version = "2019.2",
-    VcsTriggeredTargets = new[] { nameof(Pack), nameof(Test) },
-    NightlyTriggeredTargets = new[] { nameof(Pack), nameof(Test) },
-    ManuallyTriggeredTargets = new[] { nameof(Publish) },
-    NonEntryTargets = new[] { nameof(Restore) },
-    ExcludedTargets = new[] { nameof(Clean) })]
-[GitHubActions(
-    "continuous",
-    GitHubActionsImage.MacOs1014,
-    GitHubActionsImage.Ubuntu1604,
-    GitHubActionsImage.Ubuntu1804,
-    GitHubActionsImage.WindowsServer2016R2,
-    GitHubActionsImage.WindowsServer2019,
-    On = new[] { GitHubActionsTrigger.Push },
-    InvokedTargets = new[] { nameof(Test), nameof(Pack) },
-    ImportGitHubTokenAs = nameof(GitHubToken),
-    ImportSecrets = new[] { nameof(SlackWebhook), nameof(GitterAuthToken) })]
-[AppVeyor(
-    AppVeyorImage.VisualStudio2019,
-    AppVeyorImage.Ubuntu1804,
-    SkipTags = true,
-    InvokedTargets = new[] { nameof(Test), nameof(Pack) })]
-[AzurePipelines(
-    suffix: null,
-    AzurePipelinesImage.UbuntuLatest,
-    AzurePipelinesImage.WindowsLatest,
-    AzurePipelinesImage.MacOsLatest,
-    InvokedTargets = new[] { nameof(Test), nameof(Pack) },
-    NonEntryTargets = new[] { nameof(Restore) },
-    ExcludedTargets = new[] { nameof(Clean), nameof(Coverage) })]
+
 partial class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -82,7 +46,7 @@ partial class Build : NukeBuild
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-    public static int Main() => Execute<Build>(x => x.Pack);
+    public static int Main() => Execute<Build>(x => x.Restore);
 
     [CI] readonly TeamCity TeamCity;
     [CI] readonly AzurePipelines AzurePipelines;

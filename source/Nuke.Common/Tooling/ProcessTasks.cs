@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -27,6 +27,8 @@ namespace Nuke.Common.Tooling
         public static IProcess StartProcess(ToolSettings toolSettings)
         {
             var arguments = toolSettings.GetArguments();
+
+            Logger.OutputSink.WriteToolInvocation(toolSettings.ToolPath, arguments);
 
             return StartProcess(toolSettings.ToolPath,
                 arguments.RenderForExecution(),
