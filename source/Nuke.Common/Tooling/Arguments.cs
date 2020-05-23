@@ -11,16 +11,16 @@ using Nuke.Common.Utilities;
 
 namespace Nuke.Common.Tooling
 {
-    public interface IArguments
-    {
-        string FilterSecrets(string text);
-        string RenderForExecution();
-        string RenderForOutput();
-        IReadOnlyList<KeyValuePair<string, List<string>>> GetArguments();
-    }
+    //public interface IArguments
+    //{
+    //    string FilterSecrets(string text);
+    //    string RenderForExecution();
+    //    string RenderForOutput();
+    //    IReadOnlyList<KeyValuePair<string, List<string>>> GetArguments();
+    //}
 
     // TODO: extract {value} and {key} into constants
-    public sealed class Arguments : IArguments
+    public sealed class Arguments // : IArguments
     {
         private const string HiddenString = "[hidden]";
         internal const char Space = ' ';

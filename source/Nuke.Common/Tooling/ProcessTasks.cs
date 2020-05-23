@@ -28,10 +28,8 @@ namespace Nuke.Common.Tooling
         {
             var arguments = toolSettings.GetArguments();
 
-            Logger.OutputSink.WriteToolInvocation(toolSettings.ToolPath, arguments);
-
             return StartProcess(toolSettings.ToolPath,
-                arguments.RenderForExecution(),
+                arguments,
                 toolSettings.WorkingDirectory,
                 toolSettings.EnvironmentVariables,
                 toolSettings.ExecutionTimeout,
@@ -43,7 +41,7 @@ namespace Nuke.Common.Tooling
 
         public static IProcess StartProcess(
             string toolPath,
-            string arguments = null,
+            Arguments arguments = null,
             string workingDirectory = null,
             IReadOnlyDictionary<string, string> environmentVariables = null,
             int? timeout = null,
@@ -59,7 +57,10 @@ namespace Nuke.Common.Tooling
             var toolPathOverride = GetToolPathOverride(toolPath);
             if (!string.IsNullOrEmpty(toolPathOverride))
             {
-                arguments = $"{toolPath.DoubleQuoteIfNeeded()} {arguments}".TrimEnd();
+                var newArguments = new Arguments();
+                newArguments.Add(toolPath.DoubleQuoteIfNeeded());
+                newArguments.Concatenate(arguments);
+                arguments = newArguments;
                 toolPath = toolPathOverride;
             }
 
@@ -67,19 +68,36 @@ namespace Nuke.Common.Tooling
             ControlFlow.Assert(File.Exists(toolPath), $"ToolPath '{toolPath}' does not exist.");
             if (logInvocation ?? DefaultLogInvocation)
             {
-                Logger.Info($"> {Path.GetFullPath(toolPath).DoubleQuoteIfNeeded()} {outputFilter(arguments)}");
+                //Logger.Info($"> {Path.GetFullPath(toolPath).DoubleQuoteIfNeeded()} {outputFilter(arguments)}");
+                Logger.OutputSink.WriteToolInvocation(toolPath, arguments);
                 if (LogWorkingDirectory && workingDirectory != null)
                     Logger.Info($"@ {workingDirectory}");
             }
 
             return StartProcessInternal(toolPath,
-                arguments,
+                arguments.RenderForExecution(),
                 workingDirectory,
                 environmentVariables,
                 timeout,
                 logOutput ?? DefaultLogOutput,
                 customLogger,
                 outputFilter);
+        }
+
+        public static IProcess StartProcess(
+           string toolPath,
+           string arguments = null,
+           string workingDirectory = null,
+           IReadOnlyDictionary<string, string> environmentVariables = null,
+           int? timeout = null,
+           bool? logOutput = null,
+           bool? logInvocation = null,
+           Action<OutputType, string> customLogger = null,
+           Func<string, string> outputFilter = null)
+        {
+            var args = new Arguments();
+            args.Add(arguments);
+            return StartProcess(toolPath, args, workingDirectory, environmentVariables, timeout, logOutput, logInvocation, customLogger, outputFilter);
         }
 
         [CanBeNull]

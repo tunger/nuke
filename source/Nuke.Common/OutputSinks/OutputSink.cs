@@ -74,7 +74,7 @@ namespace Nuke.Common.OutputSinks
             WriteNormal();
         }
 
-        internal virtual void WriteToolInvocation(string toolPath, IArguments arguments)
+        internal virtual void WriteToolInvocation(string toolPath, Arguments arguments)
         {
             WriteInformation($"> {System.IO.Path.GetFullPath(toolPath).DoubleQuoteIfNeeded()} {arguments}");
         }

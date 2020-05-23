@@ -1,4 +1,4 @@
-// Copyright 2019 Maintainers of NUKE.
+﻿// Copyright 2019 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -43,7 +43,7 @@ namespace Nuke.Common.Tooling
             internal set => _argumentConfigurator = value;
         }
 
-        public virtual IArguments GetArguments()
+        public virtual Arguments GetArguments()
         {
             AssertValid();
 
